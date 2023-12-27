@@ -131,11 +131,18 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-
-    float positions[6] = {
+    //vertex info
+    float positions[] = {
         -0.5f,  -0.5f,
-         0.0f,   0.5f,
-         0.5f,  -0.5f
+         0.5f,  -0.5f,
+         0.5f,   0.5f,
+        -0.5f,   0.5f
+    };
+
+    // index buffer for drawing triangles
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
     };
 
     unsigned int buffer;
@@ -144,7 +151,7 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     //do not need to give data at initalisation, can be done latter neear use
     //GL_STATIC_DRAW as we will not be updating the triangle, but it is drawn a lot
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), positions, GL_STATIC_DRAW);
     // index = 0 as first atribute is what we want to use, is the index used in the vertex shader
     // size = 2 as we have 2 floats in the position we want to use
     // type = GL_FLOAT
@@ -154,6 +161,17 @@ int main(void)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
     // tell open gl that we are allowed to draw this buffer
     glEnableVertexAttribArray(0);
+
+
+    unsigned int ibo; // index buffer object, has to be unsigned
+    //make a buffer and bind it for current use
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    //do not need to give data at initalisation, can be done latter neear use
+    //GL_STATIC_DRAW as we will not be updating the triangle, but it is drawn a lot
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+
 
     ShaderProgramSource source = PaseShader("res/shaders/basic.shader");
 
@@ -171,9 +189,12 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // draw ibo as it prevents duplicating vertex info in the gpu memory
         // what are we drawing, what index do we start, how many verts ect
         // this will draw the currently bound buffer
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // has to be unsigned
+        // null ptr as we have bound ibo to GL_ELEMENT_ARRAY_BUFFER
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 
         /* Swap front and back buffers */
