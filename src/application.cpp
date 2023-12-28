@@ -8,6 +8,7 @@
 #include <sstream>
 
 // macros for error logging openGL
+// #x returns the litteral string eg #h = "foo"
 #define ASSERT(x) if (!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
     x;\
@@ -20,7 +21,6 @@ static void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
 }
-
 
 /*
 CleLogs any errors in the GL error buffer
@@ -153,6 +153,9 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    // swap the image 1 time per fraim 
+    glfwSwapInterval(1);
+
     /* can call glfwInit after creating valid context */
     if (glewInit() != GLEW_OK)
         std::cout << "Error!";
@@ -211,11 +214,23 @@ int main(void)
     unsigned int shader = createShader(source.VertexSource, source.FragmentSource);
     GLCall(glUseProgram(shader));
 
+    // get the uniform variable from the shader in the form of its id, and then 
+    // we can set the value by passing the id and the values we wish to use
+    GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+    GLCall(glUniform4f(location, 0.2f, 0.3f, 0.0f, 1.0f));
+
+    // the value we want to set the r channel to and the increment each fraim
+    float r = 0.0f;
+    float increment = 0.05f;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
+
+        // change the unifrom before we draw the elements using the shader
+        GLCall(glUniform4f(location, r, 0.0f, 1.0f - r, 1.0f));
 
         // draw ibo as it prevents duplicating vertex info in the gpu memory
         // what are we drawing, what index do we start, how many verts ect
@@ -223,6 +238,13 @@ int main(void)
         // has to be unsigned
         // null ptr as we have bound ibo to GL_ELEMENT_ARRAY_BUFFER
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+        if (r > 1.f)
+            increment = -0.05f;
+        else if (r < 0.0f)
+            increment = 0.05f;
+
+        r += increment;
 
 
         /* Swap front and back buffers */
