@@ -7,6 +7,11 @@
 #include <string>
 #include <sstream>
 
+// macros for error logging openGL
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __Line__)
 
 struct ShaderProgramSource
 {
