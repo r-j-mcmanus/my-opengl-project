@@ -12,6 +12,7 @@
 #include "IndexBuffer.h"
 #include "shader.h"
 #include "VertexArray.h"
+#include "OBJParser.h"
 
 struct ShaderProgramSource
 {
@@ -85,6 +86,9 @@ GLFWwindow* InitializeWindow(int width, int height, const char* title) {
 
 void MainLoop(GLFWwindow* window)
 {
+
+    OBJParser objParser;
+    objParser.parse("C:\\dev\\opengl\\Project1\\res\\obj\\teapot.obj");
 
     //vertex info
     float positions[] = {
