@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 //https://en.wikipedia.org/wiki/Wavefront_.obj_file
 
@@ -21,11 +22,16 @@ struct Normal {
 // where vi is the vertex index
 // vti is the texture index
 // vni is the normal vector index
-struct Face {
-    std::vector<int> vertexIndices;
-    std::vector<int> textureIndices;
-    std::vector<int> normalIndices;
+struct VertexIndices {
+    unsigned int i, j, k;
 };
+struct TextureIndices {
+    unsigned int nx, ny, nz;
+};
+struct NormalIndices {
+    unsigned int nx, ny, nz;
+};
+
 
 class OBJParser {
 public:
@@ -33,13 +39,15 @@ public:
     const std::vector<Vertex>& getVertices() const { return vertices; }
     const std::vector<TextureCoord>& getTextureCoords() const { return textureCoords; }
     const std::vector<Normal>& getNormals() const { return normals; }
-    const std::vector<Face>& getFaces() const { return faces; }
+    const std::vector<VertexIndices>& getVertexIndices() const { return vertexIndices; }
 
 private:
     std::vector<Vertex> vertices;
     std::vector<TextureCoord> textureCoords;
     std::vector<Normal> normals;
-    std::vector<Face> faces;
+    std::vector<VertexIndices> vertexIndices;
+    std::vector<TextureIndices> textureIndices;
+    std::vector<NormalIndices> normalIndices;
 
     void parseVertex(const std::string& line);
     void parseTextureCoord(const std::string& line);

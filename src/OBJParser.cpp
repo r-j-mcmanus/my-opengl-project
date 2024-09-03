@@ -65,25 +65,8 @@ void OBJParser::parseFace(const std::string& line) {
     // where vi is the vertex index
     // vti is the texture index
     // vni is the normal vector index
-    Face f;
+    VertexIndices n;
     std::istringstream ss(line.substr(2));
-    std::string token;
-    while (ss >> token) {
-        std::istringstream tokenStream(token);
-        std::string index;
-        std::vector<std::string> indices;
-        while (std::getline(tokenStream, index, '/')) {
-            indices.push_back(index);
-        }
-        if (!indices.empty()) {
-            f.vertexIndices.push_back(std::atoi(indices[0].c_str()) - 1);
-            if (indices.size() > 1 && !indices[1].empty()) {
-                f.textureIndices.push_back(std::atoi(indices[1].c_str()) - 1);
-            }
-            if (indices.size() > 2 && !indices[2].empty()) {
-                f.normalIndices.push_back(std::atoi(indices[2].c_str()) - 1);
-            }
-        }
-    }
-    faces.push_back(f);
+    ss >> n.i >> n.j >> n.k;
+    vertexIndices.push_back(n);
 }

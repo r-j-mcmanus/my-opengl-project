@@ -88,21 +88,7 @@ void MainLoop(GLFWwindow* window)
 {
 
     OBJParser objParser;
-    objParser.parse("C:\\dev\\opengl\\Project1\\res\\obj\\teapot.obj");
-
-    //vertex info
-    float positions[] = {
-        -0.5f,  -0.5f,
-         0.5f,  -0.5f,
-         0.5f,   0.5f,
-        -0.5f,   0.5f
-    };
-
-    // index buffer for drawing triangles (i -> [positions[i], positions[i+1]])
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
+    objParser.parse("res/obj/teapot.obj");
 
     VertexArray vertexArray;
 
@@ -112,20 +98,19 @@ void MainLoop(GLFWwindow* window)
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao))
 
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(objParser);
 
     //we make all the buffers we need and bind to a vertex array at the end
     unsigned int buffer;
     // index = 0 as first atribute is what we want to use, is the index used in the vertex shader
-    // size = 2 as we have 2 floats in the position we want to use
+    // size = 3 as we have 2 floats in the position we want to use
     // type = GL_FLOAT
-    // normalize = false as we are flaots 0<x<1
-    // stride = 2 as each vertex only has two data points (x pos and y pos, could also have texture / normals ect n the sasme vertex)
+    // normalize = true 
+    // stride = 3 as each vertex only has two data points (x pos and y pos, could also have texture / normals ect n the sasme vertex)
     // offset in the vertex to the data we want (sat we wanted normal, use (const void*) 8, for example)
-    vertexArray.AddVertexBuffer(vb, 0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
+    vertexArray.AddVertexBuffer(vb, 0, 3, GL_FLOAT, GL_TRUE, sizeof(float) * 2, (const void*)0);
 
-
-    IndexBuffer indexBuffer(indices, 6);
+    IndexBuffer indexBuffer(objParser);
     vertexArray.SetIndexBuffer(indexBuffer);
     vertexArray.Bind();
 
