@@ -18,8 +18,8 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    void AddVertexBuffer(const VertexBuffer& vb, unsigned int index, int size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) const;
-    void SetIndexBuffer(const IndexBuffer& ib);
+    void BindVertexBuffer(const VertexBuffer& vb, unsigned int index, int size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) const;
+    void BindIndexBuffer(const IndexBuffer& ib);
 
     void Draw() const;
 };

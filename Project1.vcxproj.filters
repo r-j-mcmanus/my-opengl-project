@@ -18,7 +18,7 @@
     <ClCompile Include="src\application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer.cpp">
+    <ClCompile Include="src\Errors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexBuffer.cpp">
@@ -36,12 +36,24 @@
     <ClCompile Include="src\OBJParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\EventHandeler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MVPMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\renderer.h">
+    <ClInclude Include="src\Errors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\VertexBuffer.h">
@@ -57,6 +69,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\OBJParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EventHandeler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transformer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WorldObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

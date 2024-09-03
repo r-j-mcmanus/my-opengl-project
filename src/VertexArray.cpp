@@ -1,5 +1,5 @@
 #include "VertexArray.h"
-#include "renderer.h"
+#include "Errors.h"
 #include <gl/glew.h>
 
 VertexArray::VertexArray() {
@@ -22,17 +22,17 @@ void VertexArray::Unbind() const {
     GLCall(glBindVertexArray(0));
 }
 
-void VertexArray::AddVertexBuffer(const VertexBuffer& vb, unsigned int index, int size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) const{
+void VertexArray::BindVertexBuffer(const VertexBuffer& vb, unsigned int index, int size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) const{
     /*
     index = 0 as first atribute is what we want to use, is the index used in the vertex shader
-    size = 2 as we have 2 floats in the position we want to use
+    size = n floats in the position we want to use
     type = GL_FLOAT
     normalize = false as we are flaots 0<x<1
-    stride = 2 as each vertex only has two data points (x pos and y pos, could also have texture / normals ect n the sasme vertex)
-        offset in the vertex to the data we want (sat we wanted normal, use (const void*) 8, for example)
-
+    stride = m data at each vertex (x y z pos, could also have texture / normals ect)
     */
     
+    // TODO args can be found from buffer directly
+
     Bind();
     vb.Bind();
     GLCall(glEnableVertexAttribArray(index)); // this line is what binds the buffer to the vao
@@ -41,7 +41,7 @@ void VertexArray::AddVertexBuffer(const VertexBuffer& vb, unsigned int index, in
     GLCall(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 }
 
-void VertexArray::SetIndexBuffer(const IndexBuffer& ib) {
+void VertexArray::BindIndexBuffer(const IndexBuffer& ib) {
     Bind();
     ib.Bind(); // bind the index buffer to say which elelemnts in the vertex array we want to draw
     m_IndexCount = ib.GetCount();  // Store the index count for use in Draw

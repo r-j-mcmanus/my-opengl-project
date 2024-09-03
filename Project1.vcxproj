@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,23 +146,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\EventHandeler.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
+    <ClCompile Include="src\MVPMatrix.cpp" />
     <ClCompile Include="src\OBJParser.cpp" />
-    <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\Errors.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\EventHandeler.h" />
+    <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\OBJParser.h" />
-    <ClInclude Include="src\renderer.h" />
+    <ClInclude Include="src\Errors.h" />
     <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\Transformer.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="src\WorldObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

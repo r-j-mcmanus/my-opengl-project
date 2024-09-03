@@ -5,7 +5,7 @@
 #include <gl/glew.h>
 // docs.gl is a good doc website!
 #include <GLFW/glfw3.h>
-#include "renderer.h"
+#include "errors.h"
 
 class Shader {
 public:
