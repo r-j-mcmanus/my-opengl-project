@@ -108,14 +108,14 @@ void renderObject(const WorldObject& object, const Camera& camera, Shader& shade
 
 void MainLoop(GLFWwindow* window)
 {
-    glm::vec3 position = glm::vec3(50, 50, 0); // Camera pos in World Space
+    glm::vec3 position = glm::vec3(12, 9, 9); // Camera pos in World Space
     glm::vec3 target = glm::vec3(0, 0, 0); // and looks at the origin
     glm::vec3 up = glm::vec3(0, 1, 0);  // Head is up (set to 0,-1,0 to look upside-down)
-    constexpr float fov = glm::radians(45.0f);
+    const float fov_deg = 45.0f;
     const float aspectRatio = (float)640 / (float)480;
     const float nearPlane = 0.1f;
     const float farPlane = 100.0f;
-    Camera camera = Camera(position, target, up, fov, aspectRatio, nearPlane, farPlane);
+    Camera camera = Camera(position, target, up, fov_deg, aspectRatio, nearPlane, farPlane);
 
     ShaderProgramSource source = PaseShader("res/shaders/mvp_shader.shader");
 
@@ -169,7 +169,7 @@ void MainLoop(GLFWwindow* window)
 int main(void)
 {
     GLFWwindow* window = InitializeWindow(640, 480, "Hello World");
-    
+
     MainLoop(window);
 
     glfwTerminate();
