@@ -13,13 +13,24 @@ WorldObject::WorldObject(const std::string& objFilePath, Shader& shaderProgram)
     OBJParser obj;
     obj.parse(objFilePath);
 
-    vertexBuffer = VertexBuffer(obj);
-    indexBuffer = IndexBuffer(obj);
+    vertexBuffer = new VertexBuffer(obj);
 
-    int vertexDim = 3;
-    int stride = 3;
-    vertexArray.BindVertexBuffer(vertexBuffer, 0, vertexDim, GL_FLOAT, GL_TRUE, sizeof(float) * stride, (const void*)0);
-    vertexArray.BindIndexBuffer(indexBuffer);
+    int size = 3; // Specifies the number of components per generic vertex attribute.
+    int stride = size * sizeof(float); // Specifies the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes are understood to be tightly packed in the array. The initial value is 0.
+    unsigned int index = 0; // This is the index of the vertex attribute. (??)
+    const void* pointer = 0; // pointer (which is actually an offset) to where in the buffer data the attribute begins (used for interlaced data)
+    // index, size, type, normalized, stride, pointer
+    vertexArray.BindVertexBuffer(*vertexBuffer, index, size, GL_FLOAT, GL_TRUE, stride, pointer);
+    
+    indexBuffer = new IndexBuffer(obj);
+    vertexArray.BindIndexBuffer(*indexBuffer);
+}
+
+
+WorldObject::~WorldObject()
+{
+    delete vertexBuffer;
+    delete indexBuffer;
 }
 
 void WorldObject::setPosition(const glm::vec3& position) {

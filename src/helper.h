@@ -1,10 +1,11 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // For glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/matrix_transform.hpp>
 
 
-glm::mat4 createRotationMatrix(const glm::vec3& rotation) {
+inline  glm::mat4 createRotationMatrix(const glm::vec3& rotation) {
+    // TODO quaterions 
     // Convert degrees to radians
     float pitchRad = glm::radians(rotation[0]);
     float yawRad = glm::radians(rotation[1]);

@@ -15,6 +15,7 @@
 class WorldObject {
 public:
     WorldObject(const std::string& objFilePath, Shader& shaderProgram);
+    ~WorldObject();
 
     void setPosition(const glm::vec3& position);
     void setRotation(const glm::vec3& rotation);
@@ -24,8 +25,8 @@ public:
     void Draw() const;
 
 private:
-    VertexBuffer vertexBuffer;
-    IndexBuffer indexBuffer;
+    VertexBuffer* vertexBuffer = nullptr;
+    IndexBuffer* indexBuffer = nullptr;
     VertexArray vertexArray;
     Shader& shader;
 

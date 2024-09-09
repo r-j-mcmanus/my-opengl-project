@@ -118,7 +118,6 @@ void MainLoop(GLFWwindow* window)
         teapot.Bind();
 
         //which shader will we use
-        //shader.Bind();
         // change the uniform before we draw the elements
         shader.SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
 

@@ -11,6 +11,7 @@ VertexArray::VertexArray() {
 }
 
 VertexArray::~VertexArray() {
+    GLCall(glBindVertexArray(0));
     GLCall(glDeleteVertexArrays(1, &m_VertexArrayObjectID));
 }
 
@@ -24,21 +25,19 @@ void VertexArray::Unbind() const {
 
 void VertexArray::BindVertexBuffer(const VertexBuffer& vb, unsigned int index, int size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) const{
     /*
-    index = 0 as first atribute is what we want to use, is the index used in the vertex shader
-    size = n floats in the position we want to use
-    type = GL_FLOAT
-    normalize = false as we are flaots 0<x<1
-    stride = m data at each vertex (x y z pos, could also have texture / normals ect)
+    unsigned int index - This is the index of the vertex attribute. (??)
+    int size - Specifies the number of components per generic vertex attribute.
+    int stride -  Specifies the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes are understood to be tightly packed in the array. The initial value is 0.
+    const void* pointer -  pointer (which is actually an offset) to where in the buffer data the attribute begins (used for interlaced data)
     */
     
-    // TODO args can be found from buffer directly
-
     Bind();
     vb.Bind();
-    GLCall(glEnableVertexAttribArray(index)); // this line is what binds the buffer to the vao
+    // this line is what binds the buffer to the vao
+    GLCall(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
     // tell open gl that we are allowed to draw this buffer
     // this allows us to ask to draw the vertexbuffer and index buffer again without spesifying it again
-    GLCall(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
+    GLCall(glEnableVertexAttribArray(index)); // use the data in the vertex buffer for the specified index attribute when drawing
 }
 
 void VertexArray::BindIndexBuffer(const IndexBuffer& ib) {
