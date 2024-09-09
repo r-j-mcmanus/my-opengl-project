@@ -22,7 +22,7 @@ IndexBuffer::IndexBuffer(const OBJParser& objParser)
     const std::vector<VertexIndices>& vertexIndices = objParser.getVertexIndices();
     //printVertices(vertexIndices);
 
-    this->m_Count = vertexIndices.size() * 3; // *3 as we are using 3d objects
+    m_Count = vertexIndices.size() * 3; // *3 as we are using 3d objects
     std::cout << "IndexBuffer count * sizeof(unsigned int) " << vertexIndices.size() << " " << sizeof(VertexIndices) << std::endl;
 
     GLCall(glGenBuffers(1, &m_RendererId)); //makes 1 buffer and bind it for use

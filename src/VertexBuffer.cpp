@@ -35,7 +35,7 @@ VertexBuffer::VertexBuffer(const OBJParser& objParser)
                         vertices.size() * sizeof(Vertex),
                         vertices.data(),
                         GL_STATIC_DRAW));
-    this->Unbind();
+    Unbind();
 }
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)

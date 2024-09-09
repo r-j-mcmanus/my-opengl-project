@@ -2,6 +2,8 @@
 #include <iostream>
 #include <gl/glew.h>
 // docs.gl is a good doc website!
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "errors.h"
 #include "shader.h"
@@ -35,11 +37,6 @@ int Shader::GetLocation(const std::string& name) const
 	return location;
 }
 
-void Shader::SetUniform4f(float v0, float v1, float v2, float v3) const
-{
-	GLCall(glUniform4f(m_location, v0, v1, v2, v3));
-}
-
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) const
 {
 	// get the uniform variable from the shader in the form of its id, and then 
@@ -48,10 +45,20 @@ void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
 	GLCall(glUniform4f(location, v0, v1, v2, v3));
 }
 
-void Shader::SetUniform4f(int location, float v0, float v1, float v2, float v3) const
+void Shader::SetUniform4f(const std::string& name, const glm::vec4& vector) const
 {
-	GLCall(glUniform4f(location, v0, v1, v2, v3));
+	// get the uniform variable from the shader in the form of its id, and then 
+	// we can set the value by passing the id and the values we wish to use
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniform4fv(location, 1, glm::value_ptr(vector)));
 }
+
+void Shader::setUniformMat4(const std::string& name, const glm::mat4& matrix) const
+{
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
+}
+
 
 /*
 5unsigned int type - openGL types are normally unsigned ints so we use this rather than the type to decouple from opengl

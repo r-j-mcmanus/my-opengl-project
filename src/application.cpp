@@ -15,6 +15,9 @@
 #include "OBJParser.h"
 #include "EventHandeler.h"
 #include "WorldObject.h"
+#include "camera.h"
+
+#include <glm/glm.hpp>
 
 struct ShaderProgramSource
 {
@@ -86,10 +89,35 @@ GLFWwindow* InitializeWindow(int width, int height, const char* title) {
 }
 
 
+void renderObject(const WorldObject& object, const Camera& camera, Shader& shader) {
+    // Get the Model, View, and Projection matrices
+    glm::mat4 modelMatrix = object.getModelMatrix();
+    glm::mat4 viewMatrix = camera.getViewMatrix();
+    glm::mat4 projectionMatrix = camera.getProjectionMatrix();
+
+    // Calculate the MVP matrix
+    glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
+
+    // Send the MVP matrix to the shader
+    shader.Bind();  // Activate the shader
+    shader.setUniformMat4("u_MVP", mvp);
+
+    // Now render the object with OpenGL calls, e.g., glDrawArrays, glDrawElements, etc.
+}
+
+
 void MainLoop(GLFWwindow* window)
 {
+    glm::vec3 position = glm::vec3(50, 50, 0); // Camera pos in World Space
+    glm::vec3 target = glm::vec3(0, 0, 0); // and looks at the origin
+    glm::vec3 up = glm::vec3(0, 1, 0);  // Head is up (set to 0,-1,0 to look upside-down)
+    constexpr float fov = glm::radians(45.0f);
+    const float aspectRatio = (float)640 / (float)480;
+    const float nearPlane = 0.1f;
+    const float farPlane = 100.0f;
+    Camera camera = Camera(position, target, up, fov, aspectRatio, nearPlane, farPlane);
 
-    ShaderProgramSource source = PaseShader("res/shaders/basic.shader");
+    ShaderProgramSource source = PaseShader("res/shaders/mvp_shader.shader");
 
     std::cout << "VERTEX" << std::endl;
     std::cout << source.VertexSource << std::endl;
@@ -120,6 +148,8 @@ void MainLoop(GLFWwindow* window)
         //which shader will we use
         // change the uniform before we draw the elements
         shader.SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
+
+        renderObject(teapot, camera, shader);
 
         teapot.Draw();
 

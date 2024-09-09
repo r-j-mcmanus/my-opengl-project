@@ -37,6 +37,12 @@ public:
         return projectionMatrix;
     }
 
+    void translate(glm::vec3 translation) {
+        position += translation;
+        target += translation;
+        updateViewMatrix();
+    }
+
 private:
     glm::vec3 position;
     glm::vec3 target;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <gl/glew.h>
 // docs.gl is a good doc website!
+#include <glm/mat4x4.hpp>
 #include <GLFW/glfw3.h>
 #include "errors.h"
 
@@ -19,11 +20,11 @@ public:
 
     int GetLocation(const std::string& name) const;
 
-    void SetUniform4f(float v0, float v1, float v2, float v3) const;
-
     void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) const;
 
-    void SetUniform4f(int location, float v0, float v1, float v2, float v3) const;
+    void SetUniform4f(const std::string& name, const glm::vec4& vector) const;
+
+    void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
 private:
     unsigned int m_RendererID;
