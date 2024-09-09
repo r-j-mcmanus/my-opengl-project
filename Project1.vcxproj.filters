@@ -36,7 +36,7 @@
     <ClCompile Include="src\OBJParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\EventHandeler.cpp">
+    <ClCompile Include="src\EventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MVPMatrix.cpp">
@@ -71,7 +71,7 @@
     <ClInclude Include="src\OBJParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EventHandeler.h">
+    <ClInclude Include="src\EventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\camera.h">

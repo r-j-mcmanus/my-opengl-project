@@ -14,6 +14,11 @@ public:
         updateProjectionMatrix();
     }
 
+    void setAspectRatio(const int width, const int height) {
+        aspectRatio = (float)width / (float)height;
+        updateProjectionMatrix();
+    }
+
     void setPosition(const glm::vec3& newPosition) {
         position = newPosition;
         updateViewMatrix();

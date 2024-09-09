@@ -13,7 +13,7 @@
 #include "shader.h"
 #include "VertexArray.h"
 #include "OBJParser.h"
-#include "EventHandeler.h"
+#include "EventHandler.h"
 #include "WorldObject.h"
 #include "camera.h"
 
@@ -134,8 +134,8 @@ void MainLoop(GLFWwindow* window)
     float r = 0.0f;
     float increment = 0.05f;
 
-    EventHandeler eventHandeler;
-    eventHandeler.registerEventCallbacks(window);
+    EventHandler eventHandler(&camera);
+    eventHandler.registerEventCallbacks(window);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

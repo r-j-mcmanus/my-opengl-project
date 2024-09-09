@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\EventHandeler.cpp" />
+    <ClCompile Include="src\EventHandler.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\MVPMatrix.cpp" />
     <ClCompile Include="src\OBJParser.cpp" />
@@ -162,7 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera.h" />
-    <ClInclude Include="src\EventHandeler.h" />
+    <ClInclude Include="src\EventHandler.h" />
     <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\OBJParser.h" />
