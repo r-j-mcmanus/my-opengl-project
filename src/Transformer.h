@@ -1,41 +1,33 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // For glm::translate, glm::rotate, glm::scale, glm::perspective
-#include <glm/gtc/type_ptr.hpp>         // For glm::value_ptr
+#include <glm/vec3.hpp>
 
 #include "helper.h"
 
 class Transformer {
 public:
-    Transformer() : modelMatrix(1.0f) {}
-    Transformer(const glm::vec3& position, const glm::vec3& rotation, const float scaleX, const float scaleY, const float scaleZ){
-        modelMatrix = glm::mat4(1.0f); 
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleX, scaleY, scaleZ));
+    Transformer(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceliration) : position(position), velocity(velocity), acceliration(acceliration) {};
+    Transformer(glm::vec3 position, glm::vec3 velocity) : position(position), velocity(velocity), acceliration(glm::vec3(0)) {};
+    Transformer(glm::vec3 position) : position(position), velocity(glm::vec3(0)), acceliration(glm::vec3(0)) {};
 
-        glm::mat4 rotationMatrix = createRotationMatrix(rotation);
-        modelMatrix = rotationMatrix * modelMatrix;
-
-        modelMatrix = glm::translate(modelMatrix, position);
+    void update(float dt) {
+        // Euler method
+        velocity += dt * acceliration;
+        position += dt * velocity;
     }
 
-    void translate(const glm::vec3& position) {
-        modelMatrix = glm::translate(modelMatrix, position);
-    }
+    void setVelocity(glm::vec3 velocity) { this->velocity = velocity; }
+    void setAcceliration(glm::vec3 velocity) { this->acceliration = acceliration; }
+    void setPosition(glm::vec3 position) { this->position = position; }
 
-    void Rotate(const glm::vec3& rotation) {
-        glm::mat4 rotationMatrix = createRotationMatrix(rotation);
-        modelMatrix = rotationMatrix * modelMatrix;
-    }
+    void incrementVelocity(glm::vec3 velocity) { this->velocity += velocity; }
+    void incrementAcceliration(glm::vec3 velocity) { this->acceliration += acceliration; }
+    void incrementPosition(glm::vec3 position) { this->position += position; }
 
-    void Scale(const glm::vec3& scale) {
-        modelMatrix = glm::scale(modelMatrix, scale);
-    }
-
-    glm::mat4 getModelMatrix() const {
-        return modelMatrix;
-    }
+    glm::vec3 getPosition() const { return position; }
 
 private:
-    glm::mat4 modelMatrix;
+    glm::vec3 position;
+    glm::vec3 velocity;
+    glm::vec3 acceliration;
 };

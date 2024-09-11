@@ -4,11 +4,12 @@
 #include <glm/gtc/matrix_transform.hpp> // For glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>         // For glm::value_ptr
 
+#include "Transformer.h"
 
-class Camera {
+class Camera: public Transformer {
 public:
-    Camera(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up, float fov, float aspectRatio, float nearPlane, float farPlane)
-        : position(position), target(target), up(up), fov(fov), aspectRatio(aspectRatio), nearPlane(nearPlane), farPlane(farPlane)
+    Camera(const glm::vec3& position, const glm::vec3& viewDirection, const glm::vec3& up, float fov, float aspectRatio, float nearPlane, float farPlane)
+        : Transformer(position), viewDirection(viewDirection), up(up), fov(fov), aspectRatio(aspectRatio), nearPlane(nearPlane), farPlane(farPlane)
     {
         updateViewMatrix();
         updateProjectionMatrix();
@@ -20,13 +21,13 @@ public:
     }
 
     void setPosition(const glm::vec3& newPosition) {
-        position = newPosition;
+        Transformer::setPosition(newPosition);
         updateViewMatrix();
     }
 
-    void setTarget(const glm::vec3& newTarget) {
-        target = newTarget;
-        updateViewMatrix();
+    void setTarget(const glm::vec3& target) {
+        viewDirection = glm::normalize(Transformer::getPosition() - target);
+        updateViewMatrix(target);
     }
 
     void setAspectRatio(float newAspectRatio) {
@@ -42,15 +43,13 @@ public:
         return projectionMatrix;
     }
 
-    void translate(glm::vec3 translation) {
-        position += translation;
-        target += translation;
+    void update(float dt) {
+        Transformer::update(dt);
         updateViewMatrix();
     }
 
 private:
-    glm::vec3 position;
-    glm::vec3 target;
+    glm::vec3 viewDirection;
     glm::vec3 up;
     float fov;
     float aspectRatio;
@@ -60,7 +59,14 @@ private:
     glm::mat4 projectionMatrix;
 
     void updateViewMatrix() {
-        viewMatrix = glm::lookAt(position, target, up);
+        glm::vec3 position = Transformer::getPosition();
+        glm::vec3 target = position - viewDirection;
+
+        viewMatrix = glm::lookAt(Transformer::getPosition(), target, up);
+    }
+
+    void updateViewMatrix(const glm::vec3& target) {
+        viewMatrix = glm::lookAt(Transformer::getPosition(), target, up);
     }
 
     void updateProjectionMatrix() {
