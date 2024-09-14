@@ -108,15 +108,15 @@ void renderObject(const WorldObject& object, const Camera& camera, Shader& shade
 
 void MainLoop(GLFWwindow* window)
 {
-    glm::vec3 position = glm::vec3(12, 9, 9); // Camera pos in World Space
+    glm::vec3 position = glm::vec3(0, 9, 10); // Camera pos in World Space
     glm::vec3 viewDirection = glm::vec3(0, 0, 0); // and looks at the origin
     glm::vec3 up = glm::vec3(0, 1, 0);  // Head is up (set to 0,-1,0 to look upside-down)
     const float fov_deg = 45.0f;
     const float aspectRatio = (float)640 / (float)480;
     const float nearPlane = 0.1f;
     const float farPlane = 100.0f;
-    Camera camera = Camera(position, viewDirection, up, fov_deg, aspectRatio, nearPlane, farPlane);
-    camera.setTarget(glm::vec3(0, 0, 0));
+    auto camera = std::make_shared<Camera>(position, viewDirection, up, fov_deg, aspectRatio, nearPlane, farPlane);
+    camera->setTarget(glm::vec3(0, 0, 0));
 
     ShaderProgramSource source = PaseShader("res/shaders/mvp_shader.shader");
 
@@ -135,8 +135,8 @@ void MainLoop(GLFWwindow* window)
     float r = 0.0f;
     float increment = 0.05f;
 
-    EventHandler eventHandler(&camera);
-    eventHandler.registerEventCallbacks(window);
+    EventHandler eventHandler(window);
+    eventHandler.registerObserver(camera);
 
     double previousTime = glfwGetTime(); // Get the initial time
 
@@ -147,9 +147,7 @@ void MainLoop(GLFWwindow* window)
         double dt = currentTime - previousTime;
         previousTime = currentTime;
 
-        camera.update(dt);
-
-
+        camera->update(dt);
 
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
@@ -160,7 +158,7 @@ void MainLoop(GLFWwindow* window)
         // change the uniform before we draw the elements
         shader.SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
 
-        renderObject(teapot, camera, shader);
+        renderObject(teapot, *camera, shader);
 
         teapot.Draw();
 
@@ -173,6 +171,8 @@ void MainLoop(GLFWwindow* window)
 
         GLCall(glfwSwapBuffers(window)); // Swap front and back buffers
         GLCall(glfwPollEvents()); // Poll for and process events
+
+        std::cout << "cam pos" << camera->getPosition()[0] << " " << camera->getPosition()[1] << " " << camera->getPosition()[2] << std::endl;
     }
 }
 

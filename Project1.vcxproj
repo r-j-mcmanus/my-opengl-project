@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\EventHandler.h" />
+    <ClInclude Include="src\EventListenerInterface.h" />
     <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\OBJParser.h" />

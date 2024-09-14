@@ -4,12 +4,15 @@
 #include <glm/gtc/matrix_transform.hpp> // For glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>         // For glm::value_ptr
 
-#include "Transformer.h"
+#include <iostream>
 
-class Camera: public Transformer {
+#include "Transformer.h"
+#include "EventListenerInterface.h"
+
+class Camera: public Transformer, public EventListenerInterface {
 public:
     Camera(const glm::vec3& position, const glm::vec3& viewDirection, const glm::vec3& up, float fov, float aspectRatio, float nearPlane, float farPlane)
-        : Transformer(position), viewDirection(viewDirection), up(up), fov(fov), aspectRatio(aspectRatio), nearPlane(nearPlane), farPlane(farPlane)
+        : Transformer(position), viewDirection(viewDirection), up(glm::normalize(up)), fov(fov), aspectRatio(aspectRatio), nearPlane(nearPlane), farPlane(farPlane)
     {
         updateViewMatrix();
         updateProjectionMatrix();
@@ -72,4 +75,68 @@ private:
     void updateProjectionMatrix() {
         projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
     }
+
+    glm::vec3 getDirectionWithoutUp() const {
+        // idea would be to get direction parrallel to the floor
+        glm::vec3 projection = glm::dot(viewDirection, up) * up;
+        glm::vec3 result = viewDirection - projection;
+
+        return glm::normalize(result);
+
+    }
+
+    void onKeyEvent(int key, int scancode, int action, int mods) override {
+        if (key == GLFW_KEY_W) {
+            glm::vec3 direction = getDirectionWithoutUp();
+            if (action == GLFW_PRESS) {
+                incrementVelocity(direction);
+                return;
+            }
+            else if (action == GLFW_RELEASE) {
+                incrementVelocity(-direction);
+                return;
+            }
+        }
+
+        if (key == GLFW_KEY_S) {
+            glm::vec3 direction = getDirectionWithoutUp();
+            if (action == GLFW_PRESS) {
+                incrementVelocity(-direction);
+                return;
+            }
+            else if (action == GLFW_RELEASE) {
+                incrementVelocity(direction);
+                return;
+            }
+        }
+
+        if (key == GLFW_KEY_A) {
+            glm::vec3 direction = getDirectionWithoutUp();
+            glm::vec3 perp_direction = glm::cross(direction, up);
+            if (action == GLFW_PRESS) {
+                incrementVelocity(-perp_direction);
+                return;
+            }
+            else if (action == GLFW_RELEASE) {
+                incrementVelocity(perp_direction);
+                return;
+            }
+        }
+         
+        if (key == GLFW_KEY_D) {
+            glm::vec3 direction = getDirectionWithoutUp();
+            glm::vec3 perp_direction = glm::cross(direction, up);
+            if (action == GLFW_PRESS) {
+                incrementVelocity(perp_direction);
+                return;
+            }
+            else if (action == GLFW_RELEASE) {
+                incrementVelocity(-perp_direction);
+                return;
+            }
+        }
+
+
+    }
+
 };

@@ -16,6 +16,10 @@ public:
         position += dt * velocity;
     }
 
+    glm::vec3 getVelocity() const { return velocity; }
+    glm::vec3 getAcceliration() const { return acceliration; }
+    glm::vec3 getPosition() const { return position; }
+
     void setVelocity(glm::vec3 velocity) { this->velocity = velocity; }
     void setAcceliration(glm::vec3 velocity) { this->acceliration = acceliration; }
     void setPosition(glm::vec3 position) { this->position = position; }
@@ -24,7 +28,6 @@ public:
     void incrementAcceliration(glm::vec3 velocity) { this->acceliration += acceliration; }
     void incrementPosition(glm::vec3 position) { this->position += position; }
 
-    glm::vec3 getPosition() const { return position; }
 
 private:
     glm::vec3 position;

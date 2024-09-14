@@ -1,120 +1,73 @@
 
 
 #include <GLFW/glfw3.h>
-#include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // For glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp>         // For glm::value_ptr
+
+#include "Transformer.h"
+#include "EventListenerInterface.h"
 #include "EventHandler.h"
-#include "camera.h"
-#include "glm/glm.hpp"
+
 
 // todo change to Observer Pattern
-
-void EventHandler::registerEventCallbacks(GLFWwindow* window) {
-    // Store the pointer to this instanec in the window's user pointer so that it can be used in the callback functions
+EventHandler::EventHandler(GLFWwindow* window) {
     glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetMouseButtonCallback(window, mouseCallback);
+    glfwSetWindowSizeCallback(window, windowResizeCallback);
 
-
-    glfwSetKeyCallback(window, key_callback);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
-    glfwSetCursorPosCallback(window, cursor_position_callback);
 }
 
-// Callback function for key events
-void EventHandler::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GL_TRUE);  // Close the window when ESC is pressed
-    }
+void EventHandler::registerObserver(std::shared_ptr<EventListenerInterface> observer) {
+    observers.push_back(observer);
+}
 
+void EventHandler::unregisterObserver(std::shared_ptr<EventListenerInterface> observer) {
+    // to compare the shared ptr with the weak ptr we need to convert the weak to a shared by using lock
+    auto condition = [&observer](const std::weak_ptr<EventListenerInterface>& weakObs) {
+        return weakObs.lock() == observer;
+        };
+    // std::remove_if returns a iterator to the nth element of a list of lenth m, where all elements i > n satisfy the condition 
+    // (it rearanges the underlying array to satify this)
+    auto newEnd = std::remove_if(observers.begin(), observers.end(), condition);
+    // remove all elements from newEnd to the end
+    observers.erase(newEnd, observers.end()); 
+}
 
-    if (key == GLFW_KEY_W) {
-        EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-
-        if (handler && handler->camera) {
-            if (action == GLFW_PRESS) {
-                std::cout << "w down" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(0, 0, 1));
-            }
-            else if (action == GLFW_RELEASE) {
-                std::cout << "w up" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(0, 0, -1));
-            }
-        }
-    }
-
-    if (key == GLFW_KEY_S) {
-        EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-
-        if (handler && handler->camera) {
-            if (action == GLFW_PRESS) {
-                std::cout << "s down" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(0, 0, -1));
-            }
-            else if (action == GLFW_RELEASE) {
-                std::cout << "s up" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(0, 0, 1));
-            }
-        }
-    }
-
-    if (key == GLFW_KEY_A) {
-        EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-
-        if (handler && handler->camera) {
-            if (action == GLFW_PRESS) {
-                std::cout << "a down" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(-1, 0, 0));
-            }
-            else if (action == GLFW_RELEASE) {
-                std::cout << "a up" << std::endl;
-                handler->camera->incrementVelocity(glm::vec3(1, 0, 0));
-            }
-        }
-    }
-
-    if (key == GLFW_KEY_D) {
-        EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-
-        if (handler && handler->camera) {
-            if (action == GLFW_PRESS) {
-                std::cout << "d down" << std::endl;
-                handler->camera->setVelocity(glm::vec3(1, 0, 0));
-            }
-            else if (action == GLFW_RELEASE) {
-                std::cout << "d up" << std::endl;
-                handler->camera->setVelocity(glm::vec3(-1, 0, 0));
-            }
+void EventHandler::notifyKeyEvent(int key, int scancode, int action, int mods) {
+    for (auto observer_wptr_it : observers) {
+        if (auto observer_ptr = observer_wptr_it.lock()) {
+            observer_ptr->onKeyEvent(key, scancode, action, mods);
         }
     }
 }
 
-// Callback function for window resize events
-void EventHandler::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // get back the 'this' pointer and cast it back to EventHandler object so we can use the camera pointer the class holds
-    // we do this so that this object can ue all interfaces in the callbacks
-    EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
-
-    // Ensure the camera is valid before calling setFov
-    if (handler && handler->camera) {
-        handler->camera->setAspectRatio(width, height);
-    }
-
-    glViewport(0, 0, width, height);
-}
-
-// Callback function for mouse button events
-void EventHandler::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        std::cout << "Left mouse button clicked." << std::endl;
-        // Handle left mouse button press
+void EventHandler::notifyMouseEvent(int button, int action, int mods) {
+    for (auto observer_wptr_it : observers) {
+        if (auto observer_ptr = observer_wptr_it.lock()) {
+            observer_ptr->onMouseEvent(button, action, mods);
+        }
     }
 }
 
-// Callback function for cursor position events
-void EventHandler::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    std::cout << "Mouse moved to position (" << xpos << ", " << ypos << ")" << std::endl;
-    // Handle mouse movement
+void EventHandler::notifyWindowResize(int width, int height) {
+    for (auto observer_wptr_it : observers) {
+        if (auto observer_ptr = observer_wptr_it.lock()) {
+            observer_ptr->onWindowResize(width, height);
+        }
+    }
+}
+
+void EventHandler::cleanExpiredObservers() {
+    // Iterate through the vector and remove expired weak_ptrs
+    for (auto it = observers.begin(); it != observers.end(); ) {
+        if (it->expired()) {
+            it = observers.erase(it);  // Remove expired weak_ptr
+        }
+        else {
+            ++it;
+        }
+    }
 }
