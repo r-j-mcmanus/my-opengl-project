@@ -37,6 +37,8 @@ class OBJParser {
 public:
     bool parse(const std::string& filename);
     const std::vector<Vertex>& getVertices() const { return vertices; }
+    const int getVerticesSize() const { return vertices.size() * sizeof(Vertex); }
+    const Vertex* getVerticesPtr() const { return vertices.data(); }
     const std::vector<TextureCoord>& getTextureCoords() const { return textureCoords; }
     const std::vector<Normal>& getNormals() const { return normals; }
     const std::vector<VertexIndices>& getVertexIndices() const { return vertexIndices; }

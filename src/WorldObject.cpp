@@ -8,12 +8,13 @@
 
 
 // Implementation
-WorldObject::WorldObject(const std::string& objFilePath, Shader& shaderProgram)
+WorldObject::WorldObject(const std::string& objFilePath, std::shared_ptr<Shader> shaderProgram)
     : shader(shaderProgram), position(0.0f), rotation(0.0f), scale(1.0f), modelMatrix(1.0f) {
     OBJParser obj;
     obj.parse(objFilePath);
 
-    vertexBuffer = new VertexBuffer(obj);
+    // copy our vertices array in a buffer for OpenGL to use
+    vertexBuffer = std::make_unique<VertexBuffer>(obj);
 
     int size = 3; // Specifies the number of components per generic vertex attribute.
     int stride = size * sizeof(float); // Specifies the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes are understood to be tightly packed in the array. The initial value is 0.
@@ -22,16 +23,10 @@ WorldObject::WorldObject(const std::string& objFilePath, Shader& shaderProgram)
     // index, size, type, normalized, stride, pointer
     vertexArray.BindVertexBuffer(*vertexBuffer, index, size, GL_FLOAT, GL_TRUE, stride, pointer);
     
-    indexBuffer = new IndexBuffer(obj);
+    indexBuffer = std::make_unique <IndexBuffer>(obj);
     vertexArray.BindIndexBuffer(*indexBuffer);
 }
 
-
-WorldObject::~WorldObject()
-{
-    delete vertexBuffer;
-    delete indexBuffer;
-}
 
 void WorldObject::setPosition(const glm::vec3& position) {
     this->position = position;
@@ -65,7 +60,7 @@ void WorldObject::updateModelMatrix() const {
 }
 
 void WorldObject::Bind() const{
-    shader.Bind();
+    shader->Bind();
 }
 
 

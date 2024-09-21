@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>         // For glm::value_ptr
 
 #include <string>
+#include <memory>
 
 #include "shader.h"
 #include "VertexBuffer.h"
@@ -14,8 +15,7 @@
 
 class WorldObject {
 public:
-    WorldObject(const std::string& objFilePath, Shader& shaderProgram);
-    ~WorldObject();
+    WorldObject(const std::string& objFilePath, std::shared_ptr<Shader> shaderProgram);
 
     void setPosition(const glm::vec3& position);
     void setRotation(const glm::vec3& rotation);
@@ -24,11 +24,12 @@ public:
     void Bind() const;
     void Draw() const;
 
+    std::shared_ptr<Shader> shader;
+
 private:
-    VertexBuffer* vertexBuffer = nullptr;
-    IndexBuffer* indexBuffer = nullptr;
+    std::unique_ptr<VertexBuffer> vertexBuffer = nullptr;
+    std::unique_ptr<IndexBuffer> indexBuffer = nullptr;
     VertexArray vertexArray;
-    Shader& shader;
 
     glm::vec3 position;
     glm::vec3 rotation;

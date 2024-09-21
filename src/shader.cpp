@@ -59,6 +59,12 @@ void Shader::setUniformMat4(const std::string& name, const glm::mat4& matrix) co
 	GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
+void Shader::setUniformInt(const std::string& name, const int i) const
+{
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniform1i(location, i));
+}
+
 
 /*
 5unsigned int type - openGL types are normally unsigned ints so we use this rather than the type to decouple from opengl

@@ -5,7 +5,7 @@
 class VertexBuffer
 {
 private:
-	unsigned int m_RendererId;
+	unsigned int m_RenderVBO;
 public:
 	VertexBuffer(const void* data, unsigned int size);
 	VertexBuffer(const OBJParser& objParser);

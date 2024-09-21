@@ -153,11 +153,14 @@
     <ClCompile Include="src\OBJParser.cpp" />
     <ClCompile Include="src\Errors.cpp" />
     <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\Skybox.cpp" />
+    <ClCompile Include="src\stb_image_implementation.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\skybox.shader" />
     <None Include="res\shaders\basic.shader" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,9 @@
     <ClInclude Include="src\OBJParser.h" />
     <ClInclude Include="src\Errors.h" />
     <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\ShaderManager.h" />
+    <ClInclude Include="src\Skybox.h" />
+    <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\Transformer.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />

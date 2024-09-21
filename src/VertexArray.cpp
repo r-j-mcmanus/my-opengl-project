@@ -33,11 +33,11 @@ void VertexArray::BindVertexBuffer(const VertexBuffer& vb, unsigned int index, i
     
     Bind();
     vb.Bind();
-    // this line is what binds the buffer to the vao
-    GLCall(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
     // tell open gl that we are allowed to draw this buffer
     // this allows us to ask to draw the vertexbuffer and index buffer again without spesifying it again
     GLCall(glEnableVertexAttribArray(index)); // use the data in the vertex buffer for the specified index attribute when drawing
+    // this line is what binds the buffer to the vao
+    GLCall(glVertexAttribPointer(index, size, type, normalized, stride, pointer));
 }
 
 void VertexArray::BindIndexBuffer(const IndexBuffer& ib) {

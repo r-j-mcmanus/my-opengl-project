@@ -16,50 +16,15 @@
 #include "EventHandler.h"
 #include "WorldObject.h"
 #include "Camera.h"
+#include "Skybox.h"
+#include "ShaderManager.h"
 
 #include <glm/glm.hpp>
-
-struct ShaderProgramSource
-{
-    std::string VertexSource;
-    std::string FragmentSource;
-};
-
-static ShaderProgramSource PaseShader(const std::string& filepath)
-{
-    enum class ShaderType
-    {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-
-    // Note file should not have a new line at the end
-    std::fstream stream(filepath);
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while (getline(stream, line))
-    {
-        if (line.find("#shader") != std::string::npos)
-        {
-            if (line.find("vertex") != std::string::npos)
-            {
-                type = ShaderType::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos)
-            {
-                type = ShaderType::FRAGMENT;
-            }
-        }
-        else
-        {
-            ss[(int)type] << line << "\n";
-        }
-    }
-    return { ss[0].str(), ss[1].str() };
-}
+#include "stb_image.h"
 
 
-GLFWwindow* InitializeWindow(int width, int height, const char* title) {
+
+static GLFWwindow* InitializeWindow(int width, int height, const char* title) {
     /* Initialize the library */
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -89,7 +54,7 @@ GLFWwindow* InitializeWindow(int width, int height, const char* title) {
 }
 
 
-void renderObject(const WorldObject& object, const Camera& camera, Shader& shader) {
+static void renderObject(const WorldObject& object, const Camera& camera) {
     // Get the Model, View, and Projection matrices
     glm::mat4 modelMatrix = object.getModelMatrix();
     glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -99,14 +64,14 @@ void renderObject(const WorldObject& object, const Camera& camera, Shader& shade
     glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 
     // Send the MVP matrix to the shader
-    shader.Bind();  // Activate the shader
-    shader.setUniformMat4("u_MVP", mvp);
+    object.shader->Bind();  // Activate the shader
+    object.shader->setUniformMat4("u_MVP", mvp);
 
-    // Now render the object with OpenGL calls, e.g., glDrawArrays, glDrawElements, etc.
+    object.Draw();
 }
 
 
-void MainLoop(GLFWwindow* window)
+static void MainLoop(GLFWwindow* window)
 {
     glm::vec3 position = glm::vec3(0, 9, 10); // Camera pos in World Space
     glm::vec3 viewDirection = glm::vec3(0, 0, 0); // and looks at the origin
@@ -118,18 +83,19 @@ void MainLoop(GLFWwindow* window)
     auto camera = std::make_shared<Camera>(position, viewDirection, up, fov_deg, aspectRatio, nearPlane, farPlane);
     camera->setTarget(glm::vec3(0, 0, 0));
 
-    ShaderProgramSource source = PaseShader("res/shaders/mvp_shader.shader");
+    ShaderManager shaderManager;
+    shaderManager.loadShader("mvp_shader", "res/shaders/mvp_shader.shader");
+    shaderManager.loadShader("skybox_shader", "res/shaders/skybox.shader");
 
-    std::cout << "VERTEX" << std::endl;
-    std::cout << source.VertexSource << std::endl;
-    std::cout << "FRAGMENT" << std::endl;
-    std::cout << source.FragmentSource << std::endl;
+    // tea pot stuff
 
-    Shader shader = Shader(source.VertexSource, source.FragmentSource);
-    WorldObject teapot = WorldObject("res/obj/teapot.obj", shader);
+    WorldObject teapot = WorldObject("res/obj/teapot.obj", shaderManager["mvp_shader"]);
+    
+    WorldObject teapot2 = WorldObject("res/obj/teapot.obj", shaderManager["mvp_shader"]);
+    teapot2.setPosition(glm::vec3(5, 0, 0));
 
-    shader.Bind();
-    shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.0f, 1.0f);
+    shaderManager["mvp_shader"]->Bind();
+    shaderManager["mvp_shader"]->SetUniform4f("u_Color", 0.2f, 0.3f, 0.0f, 1.0f);
 
     // the value we want to set the r channel to and the increment each fraim
     float r = 0.0f;
@@ -139,6 +105,21 @@ void MainLoop(GLFWwindow* window)
     eventHandler.registerObserver(camera);
 
     double previousTime = glfwGetTime(); // Get the initial time
+
+    // skybox stuff
+
+    std::vector<std::string> faces{
+        "res/img/skybox/1.jpg",
+        "res/img/skybox/2.jpg",
+        "res/img/skybox/3.jpg",
+        "res/img/skybox/4.jpg",
+        "res/img/skybox/5.jpg",
+        "res/img/skybox/6.jpg"
+    };
+    Skybox skybox = Skybox(shaderManager["skybox_shader"]);
+    skybox.LoadSkybox(faces);
+
+    GLCall(glEnable(GL_DEPTH_TEST));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -150,17 +131,19 @@ void MainLoop(GLFWwindow* window)
         camera->update(dt);
 
         /* Render here */
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         teapot.Bind();
+        shaderManager["mvp_shader"]->SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
+        renderObject(teapot, *camera);
 
-        //which shader will we use
-        // change the uniform before we draw the elements
-        shader.SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
 
-        renderObject(teapot, *camera, shader);
+        teapot2.Bind();
+        shaderManager["mvp_shader"]->SetUniform4f("u_Color", r, 0.0f, r, 1.0f);
+        renderObject(teapot2, *camera);
 
-        teapot.Draw();
+        //skybox.Render(camera->getViewMatrix(), camera->getProjectionMatrix());
 
         if (r > 1.f)
             increment = -0.05f;
@@ -171,8 +154,6 @@ void MainLoop(GLFWwindow* window)
 
         GLCall(glfwSwapBuffers(window)); // Swap front and back buffers
         GLCall(glfwPollEvents()); // Poll for and process events
-
-        std::cout << "cam pos" << camera->getPosition()[0] << " " << camera->getPosition()[1] << " " << camera->getPosition()[2] << std::endl;
     }
 }
 

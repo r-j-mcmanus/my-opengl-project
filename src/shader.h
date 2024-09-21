@@ -21,10 +21,11 @@ public:
     int GetLocation(const std::string& name) const;
 
     void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) const;
-
     void SetUniform4f(const std::string& name, const glm::vec4& vector) const;
 
     void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
+
+    void setUniformInt(const std::string& name, const int i) const;
 
 private:
     unsigned int m_RendererID;
