@@ -75,7 +75,7 @@ static void renderObject(const WorldObject& object, const Camera& camera) {
 
 static void MainLoop(GLFWwindow* window)
 {
-    glm::vec3 position = glm::vec3(5, 5, 5); // Camera pos in World Space
+    glm::vec3 position = glm::vec3(3, 3, 3); // Camera pos in World Space
     glm::vec3 viewDirection = glm::vec3(0, 0, 0); // and looks at the origin
     glm::vec3 up = glm::vec3(0, 1, 0);  // Head is up (set to 0,-1,0 to look upside-down)
     const float fov_deg = 45.0f;
@@ -210,8 +210,9 @@ static void MainLoop(GLFWwindow* window)
     glEnableVertexAttribArray(0);
 
     // lighting
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-    glm::vec3 lightColor(0.0f, 0.0f, 0.5f);
+    glm::vec3 lightPos(0.6f, 0.0f, 0.8f);
+    glm::vec3 lightColor(0.0f, 0.0f, 1.0f);
+    glm::vec3 ambiantColor(0.3f, 0.3f, 0.3f);
     glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
     glm::vec3 whiteColor(1.0f, 1.0f, 1.0f);
 
@@ -250,11 +251,14 @@ static void MainLoop(GLFWwindow* window)
 
         glm::mat4 view = camera->getViewMatrix();
         glm::mat4 projection = camera->getProjectionMatrix();
+        glm::vec3 camPosition = camera->getPosition();
 
         shaderManager["lighting_shader"]->Bind();
-        shaderManager["lighting_shader"]->SetUniform3f("objectColor", objectColor);
-        shaderManager["lighting_shader"]->SetUniform3f("lightColor", lightColor);
-        shaderManager["lighting_shader"]->SetUniform3f("lightPos", lightPos);
+        shaderManager["lighting_shader"]->SetUniform3f("u_objectColor", objectColor);
+        shaderManager["lighting_shader"]->SetUniform3f("u_ambiantColor", ambiantColor);
+        shaderManager["lighting_shader"]->SetUniform3f("u_lightColor", lightColor);
+        shaderManager["lighting_shader"]->SetUniform3f("u_lightPos", lightPos);
+        shaderManager["lighting_shader"]->SetUniform3f("u_viewPos", camPosition);
         shaderManager["lighting_shader"]->setUniformMat4("u_model", glm::mat4(1.0f));
         shaderManager["lighting_shader"]->setUniformMat4("u_view", view);
         shaderManager["lighting_shader"]->setUniformMat4("u_projection", projection);

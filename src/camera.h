@@ -14,7 +14,7 @@ public:
     Camera(const glm::vec3& position, const glm::vec3& viewDirection, const glm::vec3& up, float fov, float aspectRatio, float nearPlane, float farPlane);
 
     void setAspectRatio(const int width, const int height);
-
+    
     void setPosition(const glm::vec3& newPosition);
 
     void setTarget(const glm::vec3& target);
