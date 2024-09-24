@@ -53,6 +53,22 @@ void Shader::SetUniform4f(const std::string& name, const glm::vec4& vector) cons
 	GLCall(glUniform4fv(location, 1, glm::value_ptr(vector)));
 }
 
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2) const
+{
+	// get the uniform variable from the shader in the form of its id, and then 
+	// we can set the value by passing the id and the values we wish to use
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniform3f(location, v0, v1, v2));
+}
+
+void Shader::SetUniform3f(const std::string& name, const glm::vec3& vector) const
+{
+	// get the uniform variable from the shader in the form of its id, and then 
+	// we can set the value by passing the id and the values we wish to use
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniform3fv(location, 1, glm::value_ptr(vector)));
+}
+
 void Shader::setUniformMat4(const std::string& name, const glm::mat4& matrix) const
 {
 	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));

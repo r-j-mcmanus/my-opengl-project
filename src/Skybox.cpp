@@ -71,11 +71,14 @@ Skybox::Skybox(std::shared_ptr<Shader> shader): shader(shader) {
     GLCall(glGenBuffers(1, &skyboxVBO));
     GLCall(glGenBuffers(1, &skyboxEBO));
     GLCall(glGenTextures(1, &cubemapTextureID));
+
     GLCall(glBindVertexArray(skyboxVAO));
+
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW));
+
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW));
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
     GLCall(glEnableVertexAttribArray(0));
     //unbind all buffers

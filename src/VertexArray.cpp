@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 #include "Errors.h"
-#include <gl/glew.h>
+#include <glm/glm.hpp>
 
 VertexArray::VertexArray() {
     // make the vertex array object that will link the array buffer
