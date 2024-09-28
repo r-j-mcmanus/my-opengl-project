@@ -23,6 +23,15 @@ public:
         shaders[name] = std::make_shared<Shader>(vertexPath, fragmentPath);
     }
 
+    template <typename T, typename... Args>
+    void loadShader(const std::string& name, const std::string& fragAndVertexPath, Args&&... args) {
+        static_assert(std::is_base_of<Shader, T>::value, "T must be derived from Shader");
+
+        ShaderProgramSource source = PaseShader(fragAndVertexPath);
+        // Use perfect forwarding to construct the shader with the passed arguments
+        shaders[name] = std::make_shared<T>(source.VertexSource, source.FragmentSource, std::forward<Args>(args)...);
+    }
+
     void loadShader(const std::string& name, const std::string& fragAndVertexPath) {
         ShaderProgramSource source = PaseShader(fragAndVertexPath);
         shaders[name] = std::make_shared<Shader>(source.VertexSource, source.FragmentSource);

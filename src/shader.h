@@ -7,12 +7,15 @@
 #include <glm/mat4x4.hpp>
 #include <GLFW/glfw3.h>
 #include "errors.h"
+#include "Material.h"
+#include "Light.h"
+#include "Camera.h"
 
 class Shader {
 public:
     Shader(const std::string& vertexSource, const std::string& fragmentSource);
 
-    ~Shader();
+    virtual ~Shader();
 
     void Bind() const;
 
@@ -43,4 +46,15 @@ private:
 
     /* We take in the sorce code for the shaders as strings.*/
     static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+};
+
+
+// note if Shader was private we cannot downcast a pointer to is, this is a problem for the shader manager
+class LightingShader : public Shader
+{
+public:
+    LightingShader(const std::string& vertexSource, const std::string& fragmentSource)
+        : Shader(vertexSource, fragmentSource) {}
+
+    void SetUniforms(const glm::mat4 Model, const Camera camera, const Material material, const Light light);
 };

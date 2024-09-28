@@ -44,7 +44,6 @@ in vec3 v_Normal;
 in vec3 v_FragPos;  
 
 uniform vec3 u_lightPos; 
-uniform vec3 u_lightColor;
 uniform vec3 u_viewPos;
 uniform Material u_material;
 uniform Light u_light;

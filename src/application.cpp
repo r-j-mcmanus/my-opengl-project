@@ -20,6 +20,8 @@
 #include "ShaderManager.h"
 #include "TextureManager.h"
 #include "TexturedObject.h"
+#include "Light.h"
+#include "Material.h"
 
 #include <glm/glm.hpp>
 #include "stb_image.h"
@@ -89,7 +91,7 @@ static void MainLoop(GLFWwindow* window)
     shaderManager.loadShader("mvp_shader", "res/shaders/mvp_shader.shader");
     shaderManager.loadShader("skybox_shader", "res/shaders/skybox.shader");
     shaderManager.loadShader("texture_shader", "res/shaders/textured.shader");
-    shaderManager.loadShader("lighting_shader", "res/shaders/lighting.shader");
+    shaderManager.loadShader<LightingShader>("lighting_shader", "res/shaders/lighting.shader");
 
     TextureManager textureManager;
     textureManager.loadTexture("brickWall", "res/img/brick_wall.jpg");
@@ -209,12 +211,19 @@ static void MainLoop(GLFWwindow* window)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // lighting
-    glm::vec3 lightPos(0.6f, 0.0f, 0.8f);
-    glm::vec3 lightColor(0.0f, 0.0f, 1.0f);
-    glm::vec3 ambiantColor(0.3f, 0.3f, 0.3f);
-    glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
-    glm::vec3 whiteColor(1.0f, 1.0f, 1.0f);
+    Light light = {
+        glm::vec3(0.2f, 0.2f, 0.2f),
+        glm::vec3(0.5f, 0.5f, 0.5f),
+        glm::vec3(0.2f, 0.2f, 0.2f),
+        glm::vec3(0.6f, 0.0f, 0.8f),
+    };
+
+    Material material = {
+        glm::vec3(1.0f, 0.5f, 0.31f),
+        glm::vec3(1.0f, 0.5f, 0.31f),
+        glm::vec3(0.5f, 0.5f, 0.5f),
+        32.0f,
+    };
 
     /////////////////////
 
@@ -253,31 +262,16 @@ static void MainLoop(GLFWwindow* window)
         glm::mat4 projection = camera->getProjectionMatrix();
         glm::vec3 camPosition = camera->getPosition();
 
-        shaderManager["lighting_shader"]->Bind();
-        // fagment
-        shaderManager["lighting_shader"]->SetUniform3f("u_material.ambient", 1.0f, 0.5f, 0.31f);
-        shaderManager["lighting_shader"]->SetUniform3f("u_material.diffuse", 1.0f, 0.5f, 0.31f);
-        shaderManager["lighting_shader"]->SetUniform3f("u_material.specular", 0.5f, 0.5f, 0.5f);
-        shaderManager["lighting_shader"]->setUniformFloat("u_material.shininess", 32.0f);
+        auto lightingShader = std::dynamic_pointer_cast<LightingShader>(shaderManager.getShader("lighting_shader"));
 
-        shaderManager["lighting_shader"]->SetUniform3f("u_light.ambient", 0.2f, 0.2f, 0.2f);
-        shaderManager["lighting_shader"]->SetUniform3f("u_light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
-        shaderManager["lighting_shader"]->SetUniform3f("u_light.specular", 1.0f, 1.0f, 1.0f);
-
-        shaderManager["lighting_shader"]->SetUniform3f("u_lightColor", lightColor);
-        shaderManager["lighting_shader"]->SetUniform3f("u_lightPos", lightPos);
-        shaderManager["lighting_shader"]->SetUniform3f("u_viewPos", camPosition);
-        // vertex
-        shaderManager["lighting_shader"]->setUniformMat4("u_model", glm::mat4(1.0f));
-        shaderManager["lighting_shader"]->setUniformMat4("u_view", view);
-        shaderManager["lighting_shader"]->setUniformMat4("u_projection", projection);
+        lightingShader->SetUniforms(glm::mat4(1.0f), *camera, material, light);
 
         // render the cube
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // also draw the lamp object
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), lightPos);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), light.lightPos);
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
         shaderManager["mvp_shader"]->Bind();
         shaderManager["mvp_shader"]->SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
