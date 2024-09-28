@@ -171,6 +171,7 @@
     <ClInclude Include="src\EventListenerInterface.h" />
     <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\IndexBuffer.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\mesh.h" />
     <ClInclude Include="src\OBJParser.h" />
     <ClInclude Include="src\Errors.h" />

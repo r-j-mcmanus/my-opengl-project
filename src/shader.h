@@ -29,6 +29,7 @@ public:
     void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
     void setUniformInt(const std::string& name, const int i) const;
+    void setUniformFloat(const std::string& name, const float f) const;
 
 private:
     unsigned int m_RendererID;

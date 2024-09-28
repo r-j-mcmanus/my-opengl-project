@@ -254,11 +254,20 @@ static void MainLoop(GLFWwindow* window)
         glm::vec3 camPosition = camera->getPosition();
 
         shaderManager["lighting_shader"]->Bind();
-        shaderManager["lighting_shader"]->SetUniform3f("u_objectColor", objectColor);
-        shaderManager["lighting_shader"]->SetUniform3f("u_ambiantColor", ambiantColor);
+        // fagment
+        shaderManager["lighting_shader"]->SetUniform3f("u_material.ambient", 1.0f, 0.5f, 0.31f);
+        shaderManager["lighting_shader"]->SetUniform3f("u_material.diffuse", 1.0f, 0.5f, 0.31f);
+        shaderManager["lighting_shader"]->SetUniform3f("u_material.specular", 0.5f, 0.5f, 0.5f);
+        shaderManager["lighting_shader"]->setUniformFloat("u_material.shininess", 32.0f);
+
+        shaderManager["lighting_shader"]->SetUniform3f("u_light.ambient", 0.2f, 0.2f, 0.2f);
+        shaderManager["lighting_shader"]->SetUniform3f("u_light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+        shaderManager["lighting_shader"]->SetUniform3f("u_light.specular", 1.0f, 1.0f, 1.0f);
+
         shaderManager["lighting_shader"]->SetUniform3f("u_lightColor", lightColor);
         shaderManager["lighting_shader"]->SetUniform3f("u_lightPos", lightPos);
         shaderManager["lighting_shader"]->SetUniform3f("u_viewPos", camPosition);
+        // vertex
         shaderManager["lighting_shader"]->setUniformMat4("u_model", glm::mat4(1.0f));
         shaderManager["lighting_shader"]->setUniformMat4("u_view", view);
         shaderManager["lighting_shader"]->setUniformMat4("u_projection", projection);

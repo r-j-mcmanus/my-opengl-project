@@ -81,6 +81,12 @@ void Shader::setUniformInt(const std::string& name, const int i) const
 	GLCall(glUniform1i(location, i));
 }
 
+void Shader::setUniformFloat(const std::string& name, const float f) const
+{
+	GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+	GLCall(glUniform1f(location, f));
+}
+
 
 /*
 5unsigned int type - openGL types are normally unsigned ints so we use this rather than the type to decouple from opengl
