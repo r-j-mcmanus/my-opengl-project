@@ -92,6 +92,7 @@ static void MainLoop(GLFWwindow* window)
     shaderManager.loadShader("skybox_shader", "res/shaders/skybox.shader");
     shaderManager.loadShader("texture_shader", "res/shaders/textured.shader");
     shaderManager.loadShader<LightingShader>("lighting_shader", "res/shaders/lighting.shader");
+    shaderManager.loadShader<LightingShader>("cell_lighting_shader", "res/shaders/cell_lighting.shader");
 
     TextureManager textureManager;
     textureManager.loadTexture("brickWall", "res/img/brick_wall.jpg");
@@ -101,6 +102,7 @@ static void MainLoop(GLFWwindow* window)
     // tea pot stuff
 
     WorldObject teapot = WorldObject("res/obj/teapot.obj", shaderManager["mvp_shader"]);
+    WorldObject monkey = WorldObject("res/obj/monkey.obj", shaderManager["mvp_shader"]);
     
     //WorldObject teapot2 = WorldObject("res/obj/teapot.obj", shaderManager["mvp_shader"]);
     //teapot2.setPosition(glm::vec3(5, 0, 0));
@@ -186,11 +188,15 @@ static void MainLoop(GLFWwindow* window)
     // first, configure the cube's VAO (and VBO)
     unsigned int VBO, cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
+
+    // vbo
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+
+    // bao
     glBindVertexArray(cubeVAO);
 
     // position attribute
@@ -200,22 +206,13 @@ static void MainLoop(GLFWwindow* window)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-    unsigned int lightCubeVAO;
-    glGenVertexArrays(1, &lightCubeVAO);
-    glBindVertexArray(lightCubeVAO);
-
-    // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    glm::vec3 light_pos(1.0f, 0.0f, 0.0f);
 
     Light light = {
         glm::vec3(0.2f, 0.2f, 0.2f),
         glm::vec3(0.5f, 0.5f, 0.5f),
         glm::vec3(0.2f, 0.2f, 0.2f),
-        glm::vec3(0.6f, 0.0f, 0.8f),
+        light_pos,
     };
 
     Material material = {
@@ -227,6 +224,8 @@ static void MainLoop(GLFWwindow* window)
 
     /////////////////////
 
+    float angle = 0;
+    float ang_freq = 1;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -241,16 +240,15 @@ static void MainLoop(GLFWwindow* window)
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+        monkey.Bind();
+        shaderManager["mvp_shader"]->SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
+        renderObject(monkey, *camera);
+
         /*
         teapot.Bind();
         shaderManager["mvp_shader"]->SetUniform4f("u_Color", r, 0.0f, 1.0f - r, 1.0f);
         renderObject(teapot, *camera);
         
-
-        teapot2.Bind();
-        shaderManager["mvp_shader"]->SetUniform4f("u_Color", r, 0.0f, r, 1.0f);
-        renderObject(teapot2, *camera);
-
         brickWall.draw();
 
         //skybox.Render(camera->getViewMatrix(), camera->getProjectionMatrix());
@@ -262,7 +260,7 @@ static void MainLoop(GLFWwindow* window)
         glm::mat4 projection = camera->getProjectionMatrix();
         glm::vec3 camPosition = camera->getPosition();
 
-        auto lightingShader = std::dynamic_pointer_cast<LightingShader>(shaderManager.getShader("lighting_shader"));
+        auto lightingShader = std::dynamic_pointer_cast<LightingShader>(shaderManager.getShader("cell_lighting_shader"));
 
         lightingShader->SetUniforms(glm::mat4(1.0f), *camera, material, light);
 
@@ -277,8 +275,12 @@ static void MainLoop(GLFWwindow* window)
         shaderManager["mvp_shader"]->SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
         shaderManager["mvp_shader"]->setUniformMat4("u_MVP", projection * view * model);
 
-        glBindVertexArray(lightCubeVAO);
+        glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        angle = (angle + dt * ang_freq);
+        light.lightPos = glm::vec3(glm::cos(angle), 0.0, glm::sin(angle));
+
 
         /*
         if (r > 1.f)

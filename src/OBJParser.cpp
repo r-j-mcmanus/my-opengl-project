@@ -65,8 +65,56 @@ void OBJParser::parseFace(const std::string& line) {
     // where vi is the vertex index
     // vti is the texture index
     // vni is the normal vector index
-    VertexIndices n;
-    std::istringstream ss(line.substr(2));
-    ss >> n.i >> n.j >> n.k;
-    vertexIndices.push_back(n);
+    IndicesTriplet v_index;
+    IndicesTriplet t_index;
+    IndicesTriplet n_index;
+
+    std::istringstream ss(line.substr(2)); // skip f
+    std::string vertexInfo;
+    std::string vertexInfoElement;
+
+    // stream the line into vertexInfo which contains v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
+    // strean vertexInfo between '/' into relevant vectors
+
+    ss >> vertexInfo;
+    std::istringstream firstVertex(vertexInfo);
+    if (std::getline(firstVertex, vertexInfoElement, '/')) { 
+        v_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        t_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        n_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+
+    ss >> vertexInfo;
+    firstVertex.str(vertexInfo);
+    firstVertex.clear();
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        v_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        t_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        n_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+
+    ss >> vertexInfo;
+    firstVertex.str(vertexInfo);
+    firstVertex.clear();
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        v_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        t_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+    if (std::getline(firstVertex, vertexInfoElement, '/')) {
+        n_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+    }
+
+    vertexIndices.push_back(v_index);
+    textureIndices.push_back(t_index);
+    normalIndices.push_back(n_index);
 }

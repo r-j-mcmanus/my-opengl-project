@@ -9,7 +9,7 @@ class VertexArray {
     /* this class manages the creation, binding and cleanup of a vertex object array, and its associated VertexBuffer and IndexBuffer*/
 private:
     unsigned int m_VertexArrayObjectID; // this is the vao id used to reference the object made in GL
-    unsigned int m_IndexCount;
+    unsigned int m_IndexCount; // Store the index count for use in Draw
 
 public:
     VertexArray();

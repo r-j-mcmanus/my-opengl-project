@@ -22,14 +22,17 @@ struct Normal {
 // where vi is the vertex index
 // vti is the texture index
 // vni is the normal vector index
+struct IndicesTriplet {
+    unsigned int i, j, k;
+};
 struct VertexIndices {
     unsigned int i, j, k;
 };
 struct TextureIndices {
-    unsigned int nx, ny, nz;
+    unsigned int i, j, k;
 };
 struct NormalIndices {
-    unsigned int nx, ny, nz;
+    unsigned int i, j, k;
 };
 
 
@@ -41,15 +44,15 @@ public:
     const Vertex* getVerticesPtr() const { return vertices.data(); }
     const std::vector<TextureCoord>& getTextureCoords() const { return textureCoords; }
     const std::vector<Normal>& getNormals() const { return normals; }
-    const std::vector<VertexIndices>& getVertexIndices() const { return vertexIndices; }
+    const std::vector<IndicesTriplet>& getVertexIndices() const { return vertexIndices; }
 
 private:
     std::vector<Vertex> vertices;
     std::vector<TextureCoord> textureCoords;
     std::vector<Normal> normals;
-    std::vector<VertexIndices> vertexIndices;
-    std::vector<TextureIndices> textureIndices;
-    std::vector<NormalIndices> normalIndices;
+    std::vector<IndicesTriplet> vertexIndices;
+    std::vector<IndicesTriplet> textureIndices;
+    std::vector<IndicesTriplet> normalIndices;
 
     void parseVertex(const std::string& line);
     void parseTextureCoord(const std::string& line);

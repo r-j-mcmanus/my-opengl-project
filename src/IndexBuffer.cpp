@@ -19,7 +19,7 @@ IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 
 IndexBuffer::IndexBuffer(const OBJParser& objParser)
 {
-    const std::vector<VertexIndices>& vertexIndices = objParser.getVertexIndices();
+    const std::vector<IndicesTriplet>& vertexIndices = objParser.getVertexIndices();
     //printVertices(vertexIndices);
 
     m_Count = vertexIndices.size() * 3; // *3 as we are using 3d objects
