@@ -8,10 +8,7 @@
 #include <memory>
 
 #include "shader.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
 #include "Transformer.h"
-#include "VertexArray.h"
 
 class WorldObject {
 public:
@@ -21,15 +18,13 @@ public:
     void setRotation(const glm::vec3& rotation);
     void setScale(const glm::vec3& scale);
     glm::mat4 getModelMatrix() const;
-    void Bind() const;
-    void Draw() const;
+    const unsigned int getVao() const { return VAO; };
+    void draw() const;
 
     std::shared_ptr<Shader> shader;
 
 private:
-    std::unique_ptr<VertexBuffer> vertexBuffer = nullptr;
-    std::unique_ptr<IndexBuffer> indexBuffer = nullptr;
-    VertexArray vertexArray;
+    unsigned int VBO, VAO, vertexCount;
 
     glm::vec3 position;
     glm::vec3 rotation;

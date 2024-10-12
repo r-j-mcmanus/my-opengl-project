@@ -10,8 +10,6 @@
 #include "Skybox.h"
 #include "shader.h"
 #include "OBJParser.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
 
 #include <iostream>
 

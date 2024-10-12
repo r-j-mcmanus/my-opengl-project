@@ -1,8 +1,6 @@
 
 #include "WorldObject.h"
 #include <string>
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
 #include "OBJParser.h"
 
 
@@ -12,19 +10,31 @@ WorldObject::WorldObject(const std::string& objFilePath, std::shared_ptr<Shader>
     : shader(shaderProgram), position(0.0f), rotation(0.0f), scale(1.0f), modelMatrix(1.0f) {
     OBJParser obj;
     obj.parse(objFilePath);
+    vertexCount = obj.getVertexCount();
 
-    // copy our vertices array in a buffer for OpenGL to use
-    vertexBuffer = std::make_unique<VertexBuffer>(obj);
+    GLCall(glGenVertexArrays(1, &VAO));
 
-    int size = 3; // Specifies the number of components per generic vertex attribute.
-    int stride = size * sizeof(float); // Specifies the byte offset between consecutive generic vertex attributes. If stride is 0, the generic vertex attributes are understood to be tightly packed in the array. The initial value is 0.
-    unsigned int index = 0; // This is the index of the vertex attribute. (??)
-    const void* pointer = 0; // pointer (which is actually an offset) to where in the buffer data the attribute begins (used for interlaced data)
-    // index, size, type, normalized, stride, pointer
-    vertexArray.BindVertexBuffer(*vertexBuffer, index, size, GL_FLOAT, GL_TRUE, stride, pointer);
-    
-    indexBuffer = std::make_unique <IndexBuffer>(obj);
-    vertexArray.BindIndexBuffer(*indexBuffer);
+    // vbo
+    GLCall(glGenBuffers(1, &VBO));
+
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 
+        obj.getBufferDataSize(),
+        obj.getBufferDataPtr(),
+        GL_STATIC_DRAW));
+
+    // bao
+    GLCall(glBindVertexArray(VAO));
+
+    // position attribute
+    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
+    GLCall(glEnableVertexAttribArray(0));
+    // normal attribute, note offset at the end
+    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))));
+    GLCall(glEnableVertexAttribArray(1));
+
+    GLCall(glBindVertexArray(0));
 }
 
 
@@ -59,11 +69,10 @@ void WorldObject::updateModelMatrix() const {
     modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 }
 
-void WorldObject::Bind() const{
-    shader->Bind();
-}
+void WorldObject::draw() const {
+    GLCall(glBindVertexArray(VAO));
 
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, vertexCount));
 
-void WorldObject::Draw() const{
-    vertexArray.Draw();
+    GLCall(glBindVertexArray(0));
 }

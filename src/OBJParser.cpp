@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <map>
 
 #include "OBJParser.h"
 
@@ -35,6 +36,11 @@ bool OBJParser::parse(const std::string& filename) {
     }
 
     file.close();
+
+    // at this point we want to put all the info about a vertex into a single vector
+    // they are currently across multiple vectors and maps
+    makeBufferVertex();
+
     return true;
 }
 
@@ -60,61 +66,53 @@ void OBJParser::parseNormal(const std::string& line) {
 }
 
 void OBJParser::parseFace(const std::string& line) {
-    // obj face lines can be of the form
+    // obj face lines are of the form
     // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
     // where vi is the vertex index
     // vti is the texture index
     // vni is the normal vector index
-    IndicesTriplet v_index;
-    IndicesTriplet t_index;
-    IndicesTriplet n_index;
 
-    std::istringstream ss(line.substr(2)); // skip f
-    std::string vertexInfo;
-    std::string vertexInfoElement;
+    std::istringstream ss(line.substr(2)); // skip 'f ' at the line start
+    std::string vertexInfo; // will contain vi/vti/vni
+    std::string vertexInfoElement; // will contain vi, vti or vni
 
     // stream the line into vertexInfo which contains v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
-    // strean vertexInfo between '/' into relevant vectors
+    // -1 as .obj files are 1 indexed
+    
+    Face face;
+    for (int i = 0; i < 3; i++) {
+        ss >> vertexInfo;
+        std::istringstream firstVertex(vertexInfo);
 
-    ss >> vertexInfo;
-    std::istringstream firstVertex(vertexInfo);
-    if (std::getline(firstVertex, vertexInfoElement, '/')) { 
-        v_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        t_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        n_index.i = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-
-    ss >> vertexInfo;
-    firstVertex.str(vertexInfo);
-    firstVertex.clear();
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        v_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        t_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        n_index.j = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+        // stream vertexInfo between '/' into vertexInfoElement
+        if (std::getline(firstVertex, vertexInfoElement, '/')) {
+            face.v[i] = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+        }
+        if (std::getline(firstVertex, vertexInfoElement, '/')) {
+            face.t[i] = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+        }
+        if (std::getline(firstVertex, vertexInfoElement, '/')) {
+            face.n[i] = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
+        }
     }
 
-    ss >> vertexInfo;
-    firstVertex.str(vertexInfo);
-    firstVertex.clear();
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        v_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        t_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
-    if (std::getline(firstVertex, vertexInfoElement, '/')) {
-        n_index.k = !vertexInfoElement.empty() ? std::stoi(vertexInfoElement) - 1 : -1;
-    }
+    faces.push_back(face);
+}
 
-    vertexIndices.push_back(v_index);
-    textureIndices.push_back(t_index);
-    normalIndices.push_back(n_index);
+void OBJParser::makeBufferVertex() {
+    for (const auto& face : faces) {
+        for (int i = 0; i < 3; i++) {
+            // ge the needed vertex and normal data
+            Vertex v = vertices[face.v[i]];
+            Normal n = normals[face.n[i]];
+
+            bufferData.push_back(v.x);
+            bufferData.push_back(v.y);
+            bufferData.push_back(v.z);
+
+            bufferData.push_back(n.nx);
+            bufferData.push_back(n.ny);
+            bufferData.push_back(n.nz);
+        }
+    }
 }

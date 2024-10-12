@@ -148,9 +148,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\EventHandler.cpp" />
-    <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\light.h" />
-    <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MVPMatrix.cpp" />
     <ClCompile Include="src\OBJParser.cpp" />
     <ClCompile Include="src\Errors.cpp" />
@@ -158,8 +156,6 @@
     <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\stb_image_implementation.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
-    <ClCompile Include="src\VertexArray.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,9 +167,7 @@
     <ClInclude Include="src\EventHandler.h" />
     <ClInclude Include="src\EventListenerInterface.h" />
     <ClInclude Include="src\helper.h" />
-    <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Material.h" />
-    <ClInclude Include="src\mesh.h" />
     <ClInclude Include="src\OBJParser.h" />
     <ClInclude Include="src\Errors.h" />
     <ClInclude Include="src\shader.h" />
@@ -183,8 +177,6 @@
     <ClInclude Include="src\TexturedObject.h" />
     <ClInclude Include="src\TextureManager.h" />
     <ClInclude Include="src\Transformer.h" />
-    <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\WorldObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
