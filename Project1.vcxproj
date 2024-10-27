@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\json\include;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC;GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\json\include;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLM\;$(SolutionDir)dependencies\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +148,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\EventHandler.cpp" />
+    <ClCompile Include="src\GltfParser.cpp" />
     <ClCompile Include="src\light.h" />
     <ClCompile Include="src\MVPMatrix.cpp" />
     <ClCompile Include="src\OBJParser.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\stb_image_implementation.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\utility.cpp" />
     <ClCompile Include="src\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +168,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\EventHandler.h" />
     <ClInclude Include="src\EventListenerInterface.h" />
+    <ClInclude Include="src\GltfParser.h" />
     <ClInclude Include="src\helper.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\OBJParser.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="src\TexturedObject.h" />
     <ClInclude Include="src\TextureManager.h" />
     <ClInclude Include="src\Transformer.h" />
+    <ClInclude Include="src\utility.h" />
     <ClInclude Include="src\WorldObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,6 +10,7 @@
 #include "Errors.h"
 #include "shader.h"
 #include "OBJParser.h"
+#include "GltfParser.h"
 #include "EventHandler.h"
 #include "WorldObject.h"
 #include "Camera.h"
@@ -20,8 +21,12 @@
 #include "Light.h"
 #include "Material.h"
 
+#include "utility.h"
+
 #include <glm/glm.hpp>
 #include "stb_image.h"
+
+
 
 
 
@@ -226,19 +231,35 @@ static void MainLoop(GLFWwindow* window)
         //glBindVertexArray(cubeVAO);
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        //angle = (angle + dt * ang_freq);
-        //light.lightPos = glm::vec3(glm::cos(angle), 0.0, glm::sin(angle));
+        angle = (angle + dt * ang_freq);
+        light.lightPos = glm::vec3(glm::cos(angle), 0.0, glm::sin(angle));
 
     }
 }
 
 
+struct vec3 {
+    float x;
+    float y;
+    float z;
+};
+struct vec2 {
+    float x;
+    float y;
+};
+
+
+
 int main(void)
 {
-    GLFWwindow* window = InitializeWindow(640, 480, "Hello World");
+    //GLFWwindow* window = InitializeWindow(640, 480, "Hello World");
 
-    MainLoop(window);
+    //MainLoop(window);
 
-    glfwTerminate();
+    //glfwTerminate();
+
+    GltfParser parser;
+    parser.parse("res/gltf/cube.gltf");
+
     return 0;
 }

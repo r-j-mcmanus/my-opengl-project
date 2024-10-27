@@ -1,3 +1,6 @@
 [submodule "dependencies/GLM"]
 	path = dependencies/GLM
 	url = https://github.com/g-truc/glm
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json.git
