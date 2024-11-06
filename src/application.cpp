@@ -65,6 +65,7 @@ void renderObject(GLFWwindow* window, ShaderManager &shaderManager, WorldObject 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    // todo 
     auto lightingShader = std::dynamic_pointer_cast<LightingShader>(shaderManager.getShader("lighting_shader"));
     lightingShader->SetUniforms(glm::mat4(1.0f), camera, material, light);
 
@@ -72,6 +73,28 @@ void renderObject(GLFWwindow* window, ShaderManager &shaderManager, WorldObject 
 
     GLCall(glfwSwapBuffers(window)); // Swap front and back buffers
     GLCall(glfwPollEvents()); // Poll for and process events
+}
+
+void renderObjectAlt(GLFWwindow* window, ShaderManager& shaderManager, std::vector<IndexData> vecIndexData,
+    Camera camera, Material material, Light light) {
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+    auto lightingShader = std::dynamic_pointer_cast<LightingShader>(shaderManager.getShader("lighting_shader"));
+    lightingShader->SetUniforms(glm::mat4(1.0f), camera, material, light);
+
+    for (IndexData indexData : vecIndexData) {
+        glBindBuffer(GL_ARRAY_BUFFER, indexData.VBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexData.VBO);
+
+        glDrawElements(
+            GL_TRIANGLES,
+            indexData.count,
+            indexData.dataType,
+            reinterpret_cast<void*>(indexData.byteOffset)
+        );
+
+    }
 }
 
 
@@ -193,6 +216,9 @@ static void MainLoop(GLFWwindow* window)
         32.0f,
     };
 
+    GltfParser parser;
+    std::vector<IndexData> vecIndexData = parser.parse("res/gltf/cube.gltf");
+
     /////////////////////
 
     float angle = 0;
@@ -206,8 +232,9 @@ static void MainLoop(GLFWwindow* window)
         previousTime = currentTime;
 
         camera->update(dt);
-                
-        renderObject(window, shaderManager, monkey, *camera, material, light);
+          
+        renderObjectAlt(window, shaderManager, vecIndexData, *camera, material, light);
+        //renderObject(window, shaderManager, monkey, *camera, material, light);
 
         //glm::mat4 view = camera->getViewMatrix();
         //glm::mat4 projection = camera->getProjectionMatrix();
@@ -232,8 +259,10 @@ static void MainLoop(GLFWwindow* window)
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         angle = (angle + dt * ang_freq);
-        light.lightPos = glm::vec3(glm::cos(angle), 0.0, glm::sin(angle));
+        light.lightPos = glm::vec3(2 * glm::cos(angle), 0.0, 2 * glm::sin(angle));
 
+        GLCall(glfwSwapBuffers(window)); // Swap front and back buffers
+        GLCall(glfwPollEvents()); // Poll for and process events
     }
 }
 
@@ -257,8 +286,7 @@ int main(void)
     MainLoop(window);
 
 
-    //GltfParser parser;
-    //parser.parse("res/gltf/cube.gltf");
+
 
     glfwTerminate();
     return 0;

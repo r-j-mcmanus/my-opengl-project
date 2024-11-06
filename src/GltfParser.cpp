@@ -131,7 +131,7 @@ void GltfParser::setIndices(int indicesAccessorIndex) {
 
 
     const unsigned int VBO = VBOs[vertexAttribData.bufferIndex];
-    IndexData indexData = { VBO, vertexAttribData.count, vertexAttribData.dataType };
+    IndexData indexData = { VBO, vertexAttribData.count, vertexAttribData.dataType, vertexAttribData.byteOffset };
     vecIndexData.push_back(indexData);
 
     //// to bind the index part of the buffer as an ELEMENT_ARRAY_BUFFER

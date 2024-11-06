@@ -18,6 +18,7 @@ struct IndexData {
     const unsigned int VBO;
     const int count;
     const int dataType; // the datatype index used in gltf is the same as that in glfw
+    int byteOffset;
 };
 
 class GltfParser {
