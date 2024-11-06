@@ -8,14 +8,21 @@ struct VertexAttribData {
     int componentsPerVertex;
     int bufferIndex;
     int byteOffset;
-    int dataType;
+    int dataType;  // the datatype index used in gltf is the same as that in glfw
     int byteStride;
     bool normalized;
+    int count;
+};
+
+struct IndexData {
+    const unsigned int VBO;
+    const int count;
+    const int dataType; // the datatype index used in gltf is the same as that in glfw
 };
 
 class GltfParser {
 public:
-    bool parse(const std::string& filename);
+    std::vector<IndexData> parse(const std::string& filename);
 private:
     bool parseBuffers();
 
@@ -26,6 +33,7 @@ private:
 
     unsigned int EBO;
     std::vector<unsigned int> VBOs;
+    std::vector<IndexData> vecIndexData;
     unsigned int currentVBO=0;
 
     json data;

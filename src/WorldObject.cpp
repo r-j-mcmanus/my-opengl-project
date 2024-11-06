@@ -24,7 +24,7 @@ WorldObject::WorldObject(const std::string& objFilePath, std::shared_ptr<Shader>
         obj.getBufferDataPtr(),
         GL_STATIC_DRAW));
 
-    // bao
+    // vao
     GLCall(glBindVertexArray(VAO));
 
     // position attribute

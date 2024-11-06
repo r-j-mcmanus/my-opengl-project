@@ -252,14 +252,14 @@ struct vec2 {
 
 int main(void)
 {
-    //GLFWwindow* window = InitializeWindow(640, 480, "Hello World");
+    GLFWwindow* window = InitializeWindow(640, 480, "Hello World");
 
-    //MainLoop(window);
+    MainLoop(window);
 
-    //glfwTerminate();
 
-    GltfParser parser;
-    parser.parse("res/gltf/cube.gltf");
+    //GltfParser parser;
+    //parser.parse("res/gltf/cube.gltf");
 
+    glfwTerminate();
     return 0;
 }
